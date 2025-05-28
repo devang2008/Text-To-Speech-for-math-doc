@@ -1,0 +1,8 @@
+Sample Math Document
+This is a sample document containing text and LaTeX equations.
+Example of a simple equation: \( E = mc^2 \)
+Quadratic formula: \( x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \)
+Summation notation: \( \sum_{i=1}^{n} i = \frac{n(n+1)}{2} \)
+Integral equation: \( \int_{a}^{b} x^2 dx = \frac{b^3 - a^3}{3} \)
+Matrix notation: \( A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \)
+

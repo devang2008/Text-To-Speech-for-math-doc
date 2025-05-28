@@ -1,0 +1,19 @@
+Converted Equations with LaTeX and Normal Text  
+Einstein's Equation  
+Formula: E = mc^2  
+Quadratic Formula  
+Formula: x = (-b +- sqrt(b^2 - 4ac)) / 2a.  
+Summation Formula  
+Formula: Sum(i=1 to n) i = (n(n+1)) / 2  
+Integral Equation  
+Formula: Integral(a to b) x^2 dx = (b^3 - a^3) / 3  
+Pythagorean Theorem  
+Formula: a^2 + b^2 = c^2  
+Logarithmic Identity  
+Formula: log(ab) = log a + log b  
+Binomial Theorem  
+Formula: (a+b)^2 = a^2 + 2ab + b^2  
+Derivative Rule  
+Formula: d/dx (x^n) = n * x^(n-1)  
+ 
+

@@ -1,0 +1,7 @@
+Another Sample Math Document
+Pythagorean theorem: \( a^2 + b^2 = c^2 \)
+Logarithmic identity: \( \log(ab) = \log a + \log b \)
+Binomial theorem: \( (a+b)^2 = a^2 + 2ab + b^2 \)
+Derivative rule: \( \frac{d}{dx} x^n = n x^{n-1} \)
+Probability formula: \( P(A \cup B) = P(A) + P(B) - P(A \cap B) \)
+
