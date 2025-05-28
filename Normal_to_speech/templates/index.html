@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Math Formula Reader</title>
+  <!-- Fonts -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #a855f7;
+      --accent: #ec4899;
+      --light: #f9fafb;
+      --dark: #1f2937;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e4f1fe 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      color: var(--dark);
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(0);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-dark);
+      font-size: 2rem;
+      position: relative;
+      padding-bottom: 0.75rem;
+    }
+    
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+    }
+    
+    .description {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+    
+    .upload-container {
+      margin-bottom: 1.5rem;
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      text-align: center;
+      border: 2px dashed #d1d5db;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .upload-container:hover {
+      border-color: var(--primary);
+      background: #f0f7ff;
+    }
+    
+    .upload-container i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .upload-container p {
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    
+    .upload-container small {
+      display: block;
+      color: #9ca3af;
+    }
+    
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+    
+    .form-group.show {
+      opacity: 1;
+      height: auto;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    
+    .step {
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin: 0 1.5rem;
+    }
+    
+    .step-number {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background-color: #e5e7eb;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    
+    .step-text {
+      margin-left: 0.5rem;
+      color: #6b7280;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .step.active .step-number {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .step.active .step-text {
+      color: var(--primary-dark);
+    }
+    
+    .step.complete .step-number {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .step.complete .step-text {
+      color: var(--success);
+    }
+    
+    .step-divider {
+      flex: 1;
+      height: 2px;
+      background-color: #e5e7eb;
+      margin: 0 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    
+    .language-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .language-option {
+      flex: 1;
+      min-width: 120px;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      display: block; /* Make the label a block to make the whole area clickable */
+    }
+    
+    .language-option:hover {
+      border-color: var(--primary);
+      background: #f0f7ff;
+    }
+    
+    .language-option input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
+    .language-option input:checked + .check-icon {
+      border-color: var(--primary);
+      background-color: var(--primary);
+    }
+    
+    .language-option input:checked + .check-icon::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 0.75rem;
+    }
+    
+    .language-option input:checked ~ .language-name {
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+    
+    .check-icon {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      transition: all 0.2s ease;
+    }
+    
+    .language-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .language-name {
+      font-weight: 600;
+    }
+    
+    .next-btn, .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .next-btn:hover, .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    }
+    
+    .next-btn:active, .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    .next-btn.disabled, .submit-btn.disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .next-btn span, .submit-btn span {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .next-btn::after, .submit-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
+    
+    .next-btn:hover::after, .submit-btn:hover::after {
+      left: 100%;
+    }
+    
+    .flash-message {
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      background-color: #fee2e2;
+      color: var(--danger);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      animation: fadeIn 0.3s ease;
+      display: none;
+    }
+    
+    .flash-message.show {
+      display: flex;
+    }
+    
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    
+    .animated-icon {
+      animation: pulse 2s infinite;
+    }
+    
+    .file-name {
+      margin-top: 0.5rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      display: none;
+    }
+    
+    .loader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid var(--primary);
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    .language-selection-prompt {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background-color: #e0f2fe;
+      text-align: center;
+      border-left: 4px solid var(--primary);
+      font-weight: 600;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .step-content {
+      display: none;
+    }
+    
+    .step-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .language-option {
+        min-width: 100px;
+        padding: 0.75rem;
+      }
+      
+      .step-indicator {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .step-divider {
+        width: 2px;
+        height: 1.5rem;
+        margin: 0.5rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Math Formula Reader</h1>
+    <p class="description">Upload your PDF document containing mathematical formulas, and we'll convert them to spoken audio in your preferred language.</p>
+    
+    <div class="step-indicator">
+      <div class="step active" id="step1Indicator">
+        <div class="step-number">1</div>
+        <div class="step-text">Upload PDF</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step2Indicator">
+        <div class="step-number">2</div>
+        <div class="step-text">Select Language</div>
+      </div>
+    </div>
+    
+    <div class="flash-message" id="flashMessage">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="flashMessageText"></span>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+      <!-- Step 1: Upload PDF -->
+      <div id="step1Content" class="step-content active">
+        <div class="upload-container" id="uploadArea">
+          <i class="fas fa-file-pdf animated-icon"></i>
+          <p>Drag &amp; drop your PDF here</p>
+          <small>or click to browse</small>
+          <input type="file" name="file" id="fileInput" class="file-input" accept="application/pdf" required>
+          <div class="file-name" id="fileName"></div>
+        </div>
+        
+        <button type="button" class="next-btn disabled" id="nextBtn">
+          <span>
+            <span>Continue to Language Selection</span>
+            <i class="fas fa-arrow-right"></i>
+          </span>
+        </button>
+      </div>
+      
+      <!-- Step 2: Select Language -->
+      <div id="step2Content" class="step-content">
+        <div class="language-selection-prompt">
+          <i class="fas fa-language"></i>
+          <span>Please select your preferred output language</span>
+        </div>
+        
+        <div class="form-group show">
+          <label>Select Output Language</label>
+          <div class="language-selector">
+            <label class="language-option" for="en">
+              <input type="radio" id="en" name="language" value="en" required>
+              <div class="check-icon"></div>
+              <div class="language-icon">🇬🇧</div>
+              <div class="language-name">English</div>
+            </label>
+            
+            <label class="language-option" for="hi">
+              <input type="radio" id="hi" name="language" value="hi" required>
+              <div class="check-icon"></div>
+              <div class="language-icon">🇮🇳</div>
+              <div class="language-name">Hindi</div>
+            </label>
+            
+            <label class="language-option" for="mr">
+              <input type="radio" id="mr" name="language" value="mr" required>
+              <div class="check-icon"></div>
+              <div class="language-icon">🇮🇳</div>
+              <div class="language-name">Marathi</div>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>
+            <div class="loader" id="submitLoader"></div>
+            <span id="submitText">Convert to Audio</span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="footer">
+    <p>© 2025 MathPDF to Speech | Made By EDAI_Group 10 for accessibility</p>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const fileInput = document.getElementById('fileInput');
+      const fileName = document.getElementById('fileName');
+      const uploadArea = document.getElementById('uploadArea');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const flashMessage = document.getElementById('flashMessage');
+      const flashMessageText = document.getElementById('flashMessageText');
+      const submitLoader = document.getElementById('submitLoader');
+      const submitText = document.getElementById('submitText');
+      const uploadForm = document.getElementById('uploadForm');
+      
+      const step1Content = document.getElementById('step1Content');
+      const step2Content = document.getElementById('step2Content');
+      const step1Indicator = document.getElementById('step1Indicator');
+      const step2Indicator = document.getElementById('step2Indicator');
+      
+      const languageOptions = document.querySelectorAll('input[name="language"]');
+      
+      // Make sure English is not pre-selected
+      document.querySelectorAll('input[name="language"]').forEach(radio => {
+        radio.checked = false;
+      });
+      
+      // Step navigation
+      nextBtn.addEventListener('click', function() {
+        if (!nextBtn.classList.contains('disabled')) {
+          // Move to step 2
+          step1Content.classList.remove('active');
+          step2Content.classList.add('active');
+          
+          // Update step indicators
+          step1Indicator.classList.remove('active');
+          step1Indicator.classList.add('complete');
+          step2Indicator.classList.add('active');
+        }
+      });
+      
+      // File input change handler
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          
+          if (file.type !== 'application/pdf') {
+            showFlashMessage('Please select a PDF file');
+            this.value = '';
+            fileName.style.display = 'none';
+            nextBtn.classList.add('disabled');
+            return;
+          }
+          
+          fileName.textContent = file.name;
+          fileName.style.display = 'block';
+          nextBtn.classList.remove('disabled');
+          uploadArea.style.borderColor = 'var(--success)';
+          uploadArea.style.background = '#f0fff4';
+        } else {
+          fileName.style.display = 'none';
+          nextBtn.classList.add('disabled');
+          uploadArea.style.borderColor = '#d1d5db';
+          uploadArea.style.background = '#f3f4f6';
+        }
+      });
+      
+      document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function() {
+
+          const radio = this.querySelector('input[type="radio"]');
+          radio.checked = true;
+          
+          // Highlight the selected language
+          document.querySelectorAll('.language-option').forEach(opt => {
+            if (opt.querySelector('input[type="radio"]').checked) {
+              opt.style.borderColor = 'var(--primary)';
+              opt.style.background = '#f0f7ff';
+            } else {
+              opt.style.borderColor = '#e5e7eb';
+              opt.style.background = 'white';
+            }
+          });
+        });
+      });
+      
+      // Drag and drop handlers
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        uploadArea.style.borderColor = 'var(--primary)';
+        uploadArea.style.background = '#f0f7ff';
+      }
+      
+      function unhighlight() {
+        uploadArea.style.borderColor = '#d1d5db';
+        uploadArea.style.background = '#f3f4f6';
+      }
+      
+      uploadArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        
+        if (file.type !== 'application/pdf') {
+          showFlashMessage('Please select a PDF file');
+          fileInput.value = '';
+          fileName.style.display = 'none';
+          nextBtn.classList.add('disabled');
+          return;
+        }
+        
+        fileInput.files = dt.files;
+        fileName.textContent = file.name;
+        fileName.style.display = 'block';
+        nextBtn.classList.remove('disabled');
+        uploadArea.style.borderColor = 'var(--success)';
+        uploadArea.style.background = '#f0fff4';
+      }
+      
+      // Form submit handler
+      uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (fileInput.files.length === 0) {
+          showFlashMessage('Please select a file');
+          return;
+        }
+        
+        const selectedLanguage = document.querySelector('input[name="language"]:checked');
+        if (!selectedLanguage) {
+          showFlashMessage('Please select a language');
+          return;
+        }
+        
+        submitBtn.disabled = true;
+        submitLoader.style.display = 'block';
+        submitText.textContent = 'Processing...';
+        
+        this.submit();
+      });
+      
+      // Flash message
+      function showFlashMessage(message) {
+        flashMessageText.textContent = message;
+        flashMessage.classList.add('show');
+        
+        setTimeout(() => {
+          flashMessage.classList.remove('show');
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>

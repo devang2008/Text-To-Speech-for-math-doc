@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Math Formula Reader - Results</title>
+  <!-- Fonts -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #a855f7;
+      --accent: #ec4899;
+      --light: #f9fafb;
+      --dark: #1f2937;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e4f1fe 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      color: var(--dark);
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-dark);
+      font-size: 2rem;
+      position: relative;
+      padding-bottom: 0.75rem;
+    }
+    
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+    }
+    
+    .success-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background-color: #e6f7ef;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    .success-icon i {
+      font-size: 2.5rem;
+      color: var(--success);
+    }
+    
+    .success-message p {
+      color: #4b5563;
+      line-height: 1.6;
+      max-width: 500px;
+    }
+    
+    .player-container {
+      padding: 2rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e4f1fe 100%);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .audio-player {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    .visualizer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      padding: 0 2rem 1rem;
+      z-index: 0;
+    }
+    
+    .bar {
+      flex: 1;
+      background: rgba(99, 102, 241, 0.2);
+      height: 5px;
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+    
+    .buttons-container {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .primary-btn {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    }
+    
+    .primary-btn:active {
+      transform: translateY(0);
+    }
+    
+    .secondary-btn {
+      background: white;
+      color: var(--primary-dark);
+      border: 2px solid var(--primary);
+    }
+    
+    .secondary-btn:hover {
+      background: #f5f7ff;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.1);
+    }
+    
+    .secondary-btn:active {
+      transform: translateY(0);
+    }
+    
+    .formula-list {
+      margin-top: 2rem;
+      background: #f9fafb;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeIn 0.5s ease-out 0.5s forwards;
+    }
+    
+    .formula-list h2 {
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+      font-size: 1.25rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    
+    .formula-list h2::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+    }
+    
+    .formula-item {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .formula-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .formula-name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--primary-dark);
+    }
+    
+    .formula-expression {
+      font-family: 'Times New Roman', Times, serif;
+      padding: 0.5rem;
+      background: #f3f4f6;
+      border-radius: 0.25rem;
+      font-style: italic;
+    }
+    
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your Audio is Ready!</h1>
+    
+    <div class="success-message">
+      <div class="success-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <p>We've successfully extracted and converted the mathematical formulas from your PDF document. You can now listen to them in your selected language.</p>
+    </div>
+    
+    <div class="player-container">
+      <audio id="audioPlayer" class="audio-player" controls src="/uploads/{{ audio_file }}"></audio>
+      <div class="visualizer" id="visualizer">
+      </div>
+    </div>
+    
+    <div class="buttons-container">
+      <a href="/uploads/{{ audio_file }}" download class="btn primary-btn">
+        <i class="fas fa-download"></i>
+        <span>Download Audio</span>
+      </a>
+      <a href="/" class="btn secondary-btn">
+        <i class="fas fa-arrow-left"></i>
+        <span>Process Another File</span>
+      </a>
+    </div>
+    
+    <div class="formula-list" id="formulaList">
+      <h2>Extracted Formulas</h2>
+      <div id="formulaItems">
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>© 2025 MathPDF to Speech | Made By EDAI_Group 10 for accessibility</p>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audioPlayer = document.getElementById('audioPlayer');
+      const visualizer = document.getElementById('visualizer');
+      
+      // Create animated bars for visualization
+      for (let i = 0; i < 50; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        visualizer.appendChild(bar);
+      }
+      
+      const bars = document.querySelectorAll('.bar');
+      
+      function animateBars() {
+        if (audioPlayer.paused) {
+          bars.forEach(bar => {
+            bar.style.height = '5px';
+          });
+          return;
+        }
+        
+        bars.forEach(bar => {
+          const height = Math.floor(Math.random() * 50) + 5;
+          bar.style.height = `${height}px`;
+        });
+        
+        requestAnimationFrame(animateBars);
+      }
+      
+      audioPlayer.addEventListener('play', () => {
+        animateBars();
+      });
+      
+      audioPlayer.addEventListener('pause', () => {
+        bars.forEach(bar => {
+          bar.style.height = '5px';
+        });
+      });
+      
+      const sampleFormulas = [
+        { name: "Pythagorean Theorem", formula: "a² + b² = c²" },
+        { name: "Mass-Energy Equivalence", formula: "E = mc²" },
+        { name: "Quadratic Formula", formula: "x = (-b ± √(b² - 4ac)) / 2a" },
+        { name: "Area of a Circle", formula: "A = πr²" }
+      ];
+      
+      const formulaItems = document.getElementById('formulaItems');
+      
+      sampleFormulas.forEach((formula, index) => {
+        setTimeout(() => {
+          const formulaItem = document.createElement('div');
+          formulaItem.className = 'formula-item';
+          formulaItem.innerHTML = `
+            <div class="formula-name">${formula.name}</div>
+            <div class="formula-expression">${formula.formula}</div>
+          `;
+          formulaItems.appendChild(formulaItem);
+          
+          formulaItem.style.opacity = '0';
+          formulaItem.style.transform = 'translateY(10px)';
+          
+          setTimeout(() => {
+            formulaItem.style.transition = 'all 0.3s ease';
+            formulaItem.style.opacity = '1';
+            formulaItem.style.transform = 'translateY(0)';
+          }, 50);
+        }, 300 + index * 150);
+      });
+    });
+  </script>
+</body>
+</html>
